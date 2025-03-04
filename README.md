@@ -10,23 +10,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.PlayerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tracks: List<Track>
-    private lateinit var playerView: StyledPlayerView
+    private lateinit var playerView: PlayerView
     private lateinit var rvTracks: RecyclerView
     private var player: ExoPlayer? = null
-    private lateinit var dataSourceFactory: DataSource.Factory
+    private lateinit var dataSourceFactory: DefaultDataSource.Factory
 
+    @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    @UnstableApi
     private fun changeTrack(newTrack: Track) {
         player?.apply {
             stop()
@@ -74,12 +77,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @UnstableApi
     private fun setupExoPlayer() {
         if (player == null) {
             player = ExoPlayer.Builder(this).build().apply {
                 playerView.player = this
             }
-            dataSourceFactory = DefaultHttpDataSource.Factory()
+            dataSourceFactory = DefaultDataSource.Factory(this)
         }
 
         val url = tracks[0].url
